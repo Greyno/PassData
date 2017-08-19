@@ -21,6 +21,8 @@ class FirstViewController: UIViewController {
     var tableLastName = TableViewItems()
     var tableSize = TableViewItems()
     
+    var vegetable = [Plant]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 

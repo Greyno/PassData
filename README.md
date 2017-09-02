@@ -1,0 +1,1 @@
+This project shows you how to pass data from one view controller/view to another. The user can pass data from a detail view to a table view as well as from a table view back to a detail view, using the Delegation Design Pattern.

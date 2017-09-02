@@ -9,9 +9,12 @@
 // Use this program to learn how to pass data of interest from one screen to either cells in a TableView on another screen or a detail view on another screen. The "Populate Data" button will just populate the data but not segue to the tableView (like a Save button). This data can then be viewed in the table using the "Show Table" button
 //See: https://www.youtube.com/watch?v=pR6dR-vVZeY for a starting project
 
+//Next step is to expand this project so that we use delegation to return information from the SecondVC back to the FirstVC
+
 import UIKit
 
-class FirstViewController: UIViewController {
+//Delegate Step 4: Make FirstVC conform to the SecondVC delegate protocol.
+class FirstViewController: UIViewController, SecondViewControllerDelegate {
     @IBOutlet weak var firstNameText: UITextField!
     @IBOutlet weak var lastNameText: UITextField!
     @IBOutlet weak var sizeText: UITextField!
@@ -21,8 +24,7 @@ class FirstViewController: UIViewController {
     var tableLastName = TableViewItems()
     var tableSize = TableViewItems()
     
-    var vegetable = [Plant]()
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -33,6 +35,19 @@ class FirstViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    //MARK: - SecondVC Delegate methods
+    //Delegate Step 4: Make FirstVC conform to the SecondVC delegate protocol.
+    func secondViewControllerDidPassBack(_ controller: SecondViewController, firstName: String, lastName: String) {
+        //Put the parameters (saved from the SecondVC) into variables in the FirstVC
+        firstNameText.text! = firstName
+        lastNameText.text! = lastName
+        print("I used the Pass Back button in the SecondVC with \(firstNameText!)")
+        
+        //Dismiss the second VC
+        dismiss(animated: true, completion: nil)
+    }
+
     
     //When the 'populate data' button is pressed, set up the data that will be viewed in the tableview
     //This will simulate a Save button with no segue
@@ -66,11 +81,20 @@ class FirstViewController: UIViewController {
         //The tableview starts out empty, then we add rows as we add new data from the parent. Append the new values to the arrays during the segue
         //If doing optionals for the arrays, remove the !s here
         if segue.identifier == "TableViewSegue" {
-            let destinationVC = segue.destination as! TableViewItems
+            //Get the navigation controller that holds the TableViewItems
+            let navigationController = segue.destination as! UINavigationController
+            let destinationVC = navigationController.topViewController as! TableViewItems
+            //let destinationVC = segue.destination as! TableViewItems
         
             destinationVC.firstName.append(firstNameText.text!)
             destinationVC.lastName.append(lastNameText.text!)
             destinationVC.sizeValue.append(sizeText.text!)
+        }
+        
+        //Delegate Step 5: Let the SecondVC know that the FirstVC is now its delegate
+        if segue.identifier == "SecondViewSegue" {
+            let controller = segue.destination as! SecondViewController
+            controller.delegate = self
         }
         
     }
